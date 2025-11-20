@@ -145,7 +145,7 @@ Provided with a [filter argument](https://github.com/a2edap/dap-py/blob/master/a
 
 Placing an order is required to download files that are not in s3. The following function takes a filter like `download_search()` but places an order before downloading.
 
-#### `wdh.download_with_order(filter_arg, path='/var/tmp/', force=False)`
+#### `wdh.download_with_order(filter_arg, path='/var/tmp/', page_size=100, force=False)`
 
 Like `download_search()`, the code will prompt you to confirm that you want to download the files.
 
@@ -164,9 +164,12 @@ wdh.download_with_order(filter)
 
 ### Download Using an Existing Order(s)
 If you already have an order ID, you can use the following method:
-#### `wdh.download_orders(order_ids, path='/var/tmp/', replace=False)`
+#### `wdh.download_orders(order_ids, path='/var/tmp/', page_size=100, replace=False)`
 - `order_ids`: A list of order IDs to retrieve download URLs.
 - `path`: Specifies where files will be downloaded. Defaults to `/var/tmp/`.
+- `page_size`: The number of file links to generate for request to the database.
+    Lowering this value will cause downloads to take longer, but will fix timeout issues.
+    Conversely, raising it will cause downloads to go faster, but may cause the API endpoint to time out. Defaults to 100.
 - `replace`: Determines whether existing files should be replaced. Defaults to `False`.
 
 This method automatically fetches download URLs from the provided order IDs, confirms the user wants to proceed, and downloads files.

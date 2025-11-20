@@ -395,7 +395,7 @@ class DAP:
     # Getting download URLs
     # --------------------------------------------------------------
 
-    def __get_download_urls(self, ID, page_size=500):
+    def __get_download_urls(self, ID, page_size=100):
         """Given order ID, return the download urls"""
         urls = []
         cursor = None
@@ -666,11 +666,14 @@ class DAP:
 
         return downloaded_files
 
-    def download_with_order(self, filter_arg, path="/var/tmp", replace=False):
+    def download_with_order(self, filter_arg, path="/var/tmp", page_size=100, replace=False):
         """Place an order and download files based on a query.
 
         filter_arg (dict): The filter argument. For information on how to construct this see download-README.md
         path (str, optional): The download path. Defaults to '/var/tmp/'.
+        page_size (int, optional): The number of file links to generate for request to the database. 
+            Lowering this value will cause downloads to take longer, but will fix timeout issues. 
+            Conversely, raising it will cause downloads to go faster, but may cause the API endpoint to time out. Defaults to 100.
         replace (bool, optional): Whether to redownload and replace existing files. Defaults to False.
 
         Returns:
@@ -698,7 +701,7 @@ class DAP:
         self.__print("Attempting to fetch download urls...")
 
         try:
-            urls = self.__get_download_urls(ID)
+            urls = self.__get_download_urls(ID, page_size=page_size)
         except BadStatusCodeError as e:
             self._print("Could not get download urls")
             self._print(e)
@@ -723,13 +726,16 @@ class DAP:
 
         return downloaded_files
     
-    def download_orders(self, order_ids, path="/var/tmp", replace=False):
+    def download_orders(self, order_ids, path="/var/tmp", page_size=100, replace=False):
         """
         Download files using existing order IDs.
 
         Args:
             order_ids (list): List of order IDs to fetch download URLs from.
             path (str, optional): The download path. Defaults to '/var/tmp'.
+            page_size (int, optional): The number of file links to generate for request to the database. 
+                Lowering this value will cause downloads to take longer, but will fix timeout issues. 
+                Conversely, raising it will cause downloads to go faster, but may cause the API endpoint to time out. Defaults to 100.
             replace (bool, optional): Whether to redownload and replace existing files. Defaults to False.
 
         Returns:
@@ -749,7 +755,7 @@ class DAP:
             self.__print("Fetching download URLs...")
 
             try:
-                urls = self.__get_download_urls(ID)
+                urls = self.__get_download_urls(ID, page_size=page_size)
             except BadStatusCodeError as e:
                 self.__print(f"Could not get download URLs for order ID {ID}")
                 self.__print(e)
